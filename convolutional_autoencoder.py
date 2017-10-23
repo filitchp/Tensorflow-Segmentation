@@ -35,14 +35,14 @@ np.set_printoptions(threshold=np.nan)
 
 
 class Network:
-    IMAGE_HEIGHT = 128
-    IMAGE_WIDTH = 128
+    IMAGE_HEIGHT   = 128
+    IMAGE_WIDTH    = 128
     IMAGE_CHANNELS = 1
 
     def __init__(self, layers=None, per_image_standardization=True, batch_norm=True, skip_connections=True):
         # Define network - ENCODER (decoder will be symmetric).
 
-        if layers == None:
+        if layers is None:
             layers = []
             layers.append(Conv2d(kernel_size=7, strides=[1, 2, 2, 1], output_channels=64, name='conv_1_1'))
             layers.append(Conv2d(kernel_size=7, strides=[1, 1, 1, 1], output_channels=64, name='conv_1_2'))
@@ -119,12 +119,12 @@ class Dataset:
 
         self.pointer = 0
 
-    def file_paths_to_images(self, folder, files_list, verbose=False):
-        inputs = []
+    def file_paths_to_images(self, folder, files_list):
+        inputs  = []
         targets = []
 
         for file in files_list:
-            input_image = os.path.join(folder, 'inputs', file)
+            input_image  = os.path.join(folder, 'inputs', file)
             target_image = os.path.join(folder, 'targets' if self.include_hair else 'targets_face_only', file)
 
             test_image = np.array(cv2.imread(input_image, 0))  # load grayscale
@@ -137,7 +137,8 @@ class Dataset:
 
         return inputs, targets
 
-    def train_valid_test_split(self, X, ratio=None):
+    @staticmethod
+    def train_valid_test_split(X, ratio=None):
         if ratio is None:
             ratio = (0.7, .15, .15)
 
@@ -180,7 +181,7 @@ def draw_results(test_inputs, test_targets, test_segmentation, test_accuracy, ne
     n_examples_to_plot = 12
     fig, axs = plt.subplots(4, n_examples_to_plot, figsize=(n_examples_to_plot * 3, 10))
     fig.suptitle("Accuracy: {}, {}".format(test_accuracy, network.description), fontsize=20)
-    
+
     for example_i in range(n_examples_to_plot):
         axs[0][example_i].imshow(test_inputs[example_i], cmap='gray')
         axs[1][example_i].imshow(test_targets[example_i].astype(np.float32), cmap='gray')
